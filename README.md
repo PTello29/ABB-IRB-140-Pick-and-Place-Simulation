@@ -501,11 +501,11 @@ Esta función dentro de *pick_and_place_sequence()* permite mover las articulaci
 ## 🏗️ Instrucciones
 Para una correcta ejecución, se recomienda seguir lo siguiente:
 
-**Paso 1:** Asegúrese de que el simulador Gazebo esté corriendo y el modelo del robot esté cargado.
+**Paso 1:** Inicialice ROS correctamente con el comando *roscore*.
 
-**Paso 2:** Ejecute el script en una terminal con el entorno de ROS correctamente inicializado.
+**Paso 2:** Asegúrese de que el simulador Gazebo esté corriendo y el modelo del robot esté cargado.
 
-**Paso 3:** Use el comando: ./mover_irb140.py o rosrun abb_irb140_support mover_irb140.py si se quiere iniciar el paquete de ROS.
+**Paso 3:** Use el comando: *./mover_irb140.py* o *rosrun abb_irb140_support mover_irb140.py* si se quiere iniciar el **paquete de ROS**.
 
 **Paso 4:** Observe cómo el robot ejecuta el movimiento predefinido.
 
