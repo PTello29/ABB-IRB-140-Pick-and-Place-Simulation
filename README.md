@@ -8,7 +8,38 @@ En esta parte del manual explicamos el funcionamiento e implementación del scri
 - Haber seguido el tutorial de *Pick and place con ROS y Gazebo* e instalar y configurar correctamente según lo explicado en [ABB-IRB140-ROS-y-Gazebo](https://github.com/EvaItzcoatl/ABB-IRB140-ROS-y-Gazebo/tree/main)
 
 ---
-## 💾 Script
+## 💾 Script Pick And Place en MATLAB
+
+```
+̣%% Generación de puntos entre poses
+
+% Requiere el Robotics Toolbox de Peter Corke
+mdl_irb140; % Carga el modelo del robot ABB IRB140
+
+% Posiciones articulares
+home      = [ 0.0,  0.0, -0.0,  0.0, -0.0,  3.14];
+pre_pick  = [ 1.0,  1.0, -0.3,  0.0, -1.0,  3.14];
+pick      = [ 1.0,  1.0,  0.0,  0.0, -1.0,  3.14];
+post_pick = [ 1.0,  1.0, -0.3,  0.0, -1.0,  3.14];
+pre_place = [-1.0,  1.0,  0.0,  0.0, -1.0,  3.14];
+place     = [-1.0,  1.0,  0.3,  0.0, -1.0,  3.14];
+post_place= [-1.0,  0.5,  0.0,  0.0, -1.0,  3.14];
+
+% Número de pasos por trayecto
+steps = 50;
+
+% Calcular trayectorias y mostrar matrices de transformación
+qTraj = jtraj(home, pre_pick, steps);
+
+disp('Matrices de transformación entre HOME y PRE_PICK:');
+for i = 1:steps
+    T = irb140.fkine(qTraj(i,:)); % Cinemática directa
+    disp(['Paso ', num2str(i)]);
+    disp(T.T); % Matriz 4x4 de transformación homogénea
+end
+```
+
+## 💾 Script Pick And Place en Python para ROS
 
 El script que hace funcionar la simulación del Pick And Place es el siguiente:
 
