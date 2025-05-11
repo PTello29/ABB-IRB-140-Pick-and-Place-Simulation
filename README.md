@@ -557,7 +557,7 @@ Esta función dentro de *pick_and_place_sequence()* permite mover las articulaci
 
 ---
 ## 💾 Script Pick And Place en MATLAB
-Este código permite el cálculo de las posiciones intermedias entre cada punto de ancla o *waypoints* y lo ejecuta en *MATLAB* para su visualización:
+Este código permite el cálculo de las posiciones intermedias entre cada punto de ancla o *waypoints* y lo ejecuta en *MATLAB* para su visualización usando el *Robotics Toolbox de Peter Corke* anteriormente mencionado:
 
 ```matlab
 %% Pick And Place de ABB IRB140 en MATLAB
