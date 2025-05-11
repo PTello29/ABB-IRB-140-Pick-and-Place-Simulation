@@ -8,79 +8,12 @@ En esta parte del manual explicamos el funcionamiento e implementación del scri
 - Haber seguido el tutorial de *Pick and place con ROS y Gazebo* e instalar y configurar correctamente según lo explicado en [ABB-IRB140-ROS-y-Gazebo](https://github.com/EvaItzcoatl/ABB-IRB140-ROS-y-Gazebo/tree/main)
 
 ---
-## 💾 Script Pick And Place en MATLAB
-
-```matlab
-%% Pick And Place de ABB IRB140 en MATLAB
-mdl_irb140 % 6 GDL y tiene muñeca esférica
-irb140.teach
-
-%% Crear los waypoints
-% Posición home
-q_home= [0 0 0 0 0 0]
-T_home = irb140.fkine(q_home)
-
-% Posición Approach Pick
-q_approach_pick = [1 1 -0.3 0 -1 0]
-T_approach_pick = irb140.fkine(q_approach_pick)
-
-% Posición Pick con Cinemática Inversa
-T_pick = T_approach_pick.T
-T_pick(3,4) = 0
-q_pick = irb140.ikine6s(T_pick)
-
-% Posición Approach Place
-q_approach_place = [-1 1 0 0 -1 0]
-T_approach_place = irb140.fkine(q_approach_place)
-
-% Posición Place con Cinemática Inversa
-T_place = T_approach_place.T
-T_place(3,4) = 0
-q_place = irb140.ikine6s(T_place)
-
-%% Armar trayectorias
-steps = 10
-
-% Movimiento 1
-M1 = jtraj(q_home, q_approach_pick, steps)
-
-% Movimiento 2
-T_M2 = ctraj(T_approach_pick.T, T_pick, steps)
-M2 = irb140.ikine6s(T_M2)
-
-% Movimiento 3
-T_M3 = ctraj(T_pick, T_approach_pick.T, steps)
-M3 = irb140.ikine6s(T_M3)
-
-% Movimiento 4
-M4 = jtraj(q_approach_pick, q_approach_place, steps)
-
-% Movimiento 5
-T_M5 = ctraj(T_approach_place.T, T_place, steps)
-M5 = irb140.ikine6s(T_M5)
-
-% Movimiento 6
-T_M6 = ctraj(T_place, T_approach_place.T, steps)
-M6 = irb140.ikine6s(T_M6)
-
-% Movimiento Regreso
-MR = jtraj(q_approach_place, q_approach_pick, steps)
-
-% Movimiento Final
-MF = jtraj(q_approach_place, q_home, steps)
-
-%% Plotear las trayectorias
-M = [M1; M2; M3; M4; M5; M6; MR; M2; M3; M4; M5; M6; MF]
-figure
-irb140.plot(M)
-end
-```
 
 ## 💾 Script Pick And Place en Python para ROS
 
 El script que hace funcionar la simulación del Pick And Place es el siguiente:
 
-```
+```python
 #!/usr/bin/env python3
 import rospy
 import time
@@ -557,14 +490,141 @@ El script puede resumirse en dos funciones principales:
 
 * pick_and_place_sequence():
 
+```pyhton
+def pick_and_place_sequence():
+    # Home position
+    home = [0.0, 0.0, 0.0, 0.0, 0.0, 3.14]
+    home_a_pre1 = [0.1, 0.1, -0.03, 0.0, -0.1, 3.14]
+    home_a_pre2 = [0.2, 0.2, -0.05, 0.0, -0.2, 3.14]
+    home_a_pre3 = [0.3, 0.3, -0.08, 0.0, -0.3, 3.14]
+    home_a_pre4 = [0.4, 0.4, -0.1, 0.0, -0.4, 3.14]
+    home_a_pre5 = [0.5, 0.5, -0.13, 0.0, -0.5, 3.14]
+    home_a_pre6 = [0.6, 0.6, -0.15, 0.0, -0.6, 3.14]
+    home_a_pre7 = [0.7, 0.7, -0.18, 0.0, -0.7, 3.14]
+    home_a_pre8 = [0.8, 0.8, -0.2, 0.0, -0.8, 3.14]
+    home_a_pre9 = [0.9, 0.9, -0.25, 0.0, -0.9, 3.14]
+    home_a_pre10 = [0.95, 0.95, -0.28, 0.0, -0.95, 3.14]
+    # Posición sobre el objeto a recoger
+    pre_pick = [1.0, 1.0, -0.3, 0.0, -1.0, 3.14]
+    pre_a_pick1 = [1.0, 1.0, -0.28, 0.0, -1.0, 3.14]
+    pre_a_pick2 = [1.0, 1.0, -0.25, 0.0, -1.0, 3.14]
+    pre_a_pick3 = [1.0, 1.0, -0.23, 0.0, -1.0, 3.14]
+    pre_a_pick4 = [1.0, 1.0, -0.2, 0.0, -1.0, 3.14]
+    pre_a_pick5 = [1.0, 1.0, -0.18, 0.0, -1.0, 3.14]
+    pre_a_pick6 = [1.0, 1.0, -0.15, 0.0, -1.0, 3.14]
+    pre_a_pick7 = [1.0, 1.0, -0.13, 0.0, -1.0, 3.14]
+    pre_a_pick8 = [1.0, 1.0, -0.1, 0.0, -1.0, 3.14]
+    pre_a_pick9 = [1.0, 1.0, -0.08, 0.0, -1.0, 3.14]
+    pre_a_pick10 = [1.0, 1.0, -0.05, 0.0, -1.0, 3.14]
+    pre_a_pick11 = [1.0, 1.0, -0.03, 0.0, -1.0, 3.14]
+    # Posición para recoger (con gripper abierto)
+    ...
+```
+
 Esta función es la principal del código y arranca estableciendo los valores articulares de los motores en posiciones como *“home”, “pre_pick”, “pick”, “post_pick”, “pre_place”, “place”* y *“post_place”*. Estas posiciones de ancla fueron calculadas según nuestras necesidades, pero el usuario puede modificar las posiciones a su conveniencia alterando los valores de cada posición. Igualmente se incluyeron posiciones intermedias para trazar la trayectoria de movimiento. Estos valores pueden ser calculados en programas como *MATLAB* con la función *jtraj* del *Robotics Toolbox de Peter Corke*. Esto arroja matrices de transformación homogéneas entre una posición y la siguiente (por ejemplo, entre *home* y *pre_pick*) y se puede alterar la cantidad de matrices que se desean. Para cambiar los valores de la matriz de transformación homogénea a valores DH (los cuales son los que se usan como valores en las posiciones) se usa la función *ikine6s* (solamente para robots de 6 GDL, ya que para otro tipo de robot solo es *ikine*) igualmente del *Robotics Toolbox de Peter Corke*, el cual permite calcular la cinemática inversa y obtener estos valores.
 
 **NOTA**: el *Robotics Toolbox de Peter Corke* te permite calcular la cinemática inversa y obtener los valores DH pero estos valores no siempre pueden coincidir con los valores establecidos en las posiciones, por lo que el usuario puede experimentar que el modelo tenga movimientos bruscos en las trayectorias. Es decir, que las articulaciones del robot se vean afectadas y muestren una configuración completamente distinta a la que se quiere, por lo que es recomendable modificar los valores o bien, calcular los propios valores DH. 
 
 * move_robot(joint_positions):
 
+```pyhton
+# Secuencia de movimientos
+    rospy.loginfo("Moviendo a posición HOME")
+    move_robot(home)
+    time.sleep(0.1)
+    
+    move_robot(home_a_pre1)
+    time.sleep(0.1)
+    
+    move_robot(home_a_pre2)
+    time.sleep(0.1)
+    
+    move_robot(home_a_pre3)
+    time.sleep(0.1)
+    
+    move_robot(home_a_pre4)
+    time.sleep(0.1)
+    
+    move_robot(home_a_pre5)
+    time.sleep(0.1)
+    
+    move_robot(home_a_pre6)
+    time.sleep(0.1)
+    ...
+```
+
 Esta función dentro de *pick_and_place_sequence()* permite mover las articulaciones del robot y mostrarlas en la simulación. En la parte *a)* se explicó sobre cómo se establecieron los valores, por lo que en esta parte se mandan a llamar las posiciones para mostrarlas en la simulación. Hay que notar que después de cada función *move_robot()* se tiene un *time.sleep()* el cual puede ser modificado a gusto del usuario. Esta función solo hará que se espere un momento en que pase de una posición articular a la siguiente.
 
+---
+## 💾 Script Pick And Place en MATLAB
+Este código permite el cálculo de las posiciones intermedias entre cada punto de ancla o *waypoints* y lo ejecuta en *MATLAB* para su visualización:
+
+```matlab
+%% Pick And Place de ABB IRB140 en MATLAB
+mdl_irb140 % 6 GDL y tiene muñeca esférica
+irb140.teach
+
+%% Crear los waypoints
+% Posición home
+q_home= [0 0 0 0 0 0]
+T_home = irb140.fkine(q_home)
+
+% Posición Approach Pick
+q_approach_pick = [1 1 -0.3 0 -1 0]
+T_approach_pick = irb140.fkine(q_approach_pick)
+
+% Posición Pick con Cinemática Inversa
+T_pick = T_approach_pick.T
+T_pick(3,4) = 0
+q_pick = irb140.ikine6s(T_pick)
+
+% Posición Approach Place
+q_approach_place = [-1 1 0 0 -1 0]
+T_approach_place = irb140.fkine(q_approach_place)
+
+% Posición Place con Cinemática Inversa
+T_place = T_approach_place.T
+T_place(3,4) = 0
+q_place = irb140.ikine6s(T_place)
+
+%% Armar trayectorias
+steps = 10
+
+% Movimiento 1
+M1 = jtraj(q_home, q_approach_pick, steps)
+
+% Movimiento 2
+T_M2 = ctraj(T_approach_pick.T, T_pick, steps)
+M2 = irb140.ikine6s(T_M2)
+
+% Movimiento 3
+T_M3 = ctraj(T_pick, T_approach_pick.T, steps)
+M3 = irb140.ikine6s(T_M3)
+
+% Movimiento 4
+M4 = jtraj(q_approach_pick, q_approach_place, steps)
+
+% Movimiento 5
+T_M5 = ctraj(T_approach_place.T, T_place, steps)
+M5 = irb140.ikine6s(T_M5)
+
+% Movimiento 6
+T_M6 = ctraj(T_place, T_approach_place.T, steps)
+M6 = irb140.ikine6s(T_M6)
+
+% Movimiento Regreso
+MR = jtraj(q_approach_place, q_approach_pick, steps)
+
+% Movimiento Final
+MF = jtraj(q_approach_place, q_home, steps)
+
+%% Plotear las trayectorias
+M = [M1; M2; M3; M4; M5; M6; MR; M2; M3; M4; M5; M6; MF]
+figure
+irb140.plot(M)
+end
+```
+El código 
 ---
 ## 🏗️ Instrucciones
 Para una correcta ejecución, se recomienda seguir lo siguiente:
