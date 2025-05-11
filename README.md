@@ -484,7 +484,7 @@ if __name__ == '__main__':
 Puede encontrarse de igual forma en *src/abb_irb140_support/scripts/mover_irb140.py*
 
 ---
-## 🛠️ Descripción del Código
+## 🛠️ Descripción del Código de Pick and Place en Python para ROS
 
 El script puede resumirse en dos funciones principales:
 
@@ -624,7 +624,91 @@ figure
 irb140.plot(M)
 end
 ```
-El código 
+
+---
+## 🛠️ Descripción del Código Pick And Place en MATLAB
+
+El código se puede dividir en tres partes 
+
+* Inicialización del robot:
+```matlab
+%% Pick And Place de ABB IRB140 en MATLAB
+mdl_irb140 % 6 GDL y tiene muñeca esférica
+irb140.teach
+```
+
+* Creación de waypoints:
+
+```matlab
+%% Crear los waypoints
+% Posición home
+q_home= [0 0 0 0 0 0]
+T_home = irb140.fkine(q_home)
+
+% Posición Approach Pick
+q_approach_pick = [1 1 -0.3 0 -1 0]
+T_approach_pick = irb140.fkine(q_approach_pick)
+
+% Posición Pick con Cinemática Inversa
+T_pick = T_approach_pick.T
+T_pick(3,4) = 0
+q_pick = irb140.ikine6s(T_pick)
+
+% Posición Approach Place
+q_approach_place = [-1 1 0 0 -1 0]
+T_approach_place = irb140.fkine(q_approach_place)
+
+% Posición Place con Cinemática Inversa
+T_place = T_approach_place.T
+T_place(3,4) = 0
+q_place = irb140.ikine6s(T_place)
+```
+
+* Armar trayectorias
+
+```matlab
+%% Armar trayectorias
+steps = 10
+
+% Movimiento 1
+M1 = jtraj(q_home, q_approach_pick, steps)
+
+% Movimiento 2
+T_M2 = ctraj(T_approach_pick.T, T_pick, steps)
+M2 = irb140.ikine6s(T_M2)
+
+% Movimiento 3
+T_M3 = ctraj(T_pick, T_approach_pick.T, steps)
+M3 = irb140.ikine6s(T_M3)
+
+% Movimiento 4
+M4 = jtraj(q_approach_pick, q_approach_place, steps)
+
+% Movimiento 5
+T_M5 = ctraj(T_approach_place.T, T_place, steps)
+M5 = irb140.ikine6s(T_M5)
+
+% Movimiento 6
+T_M6 = ctraj(T_place, T_approach_place.T, steps)
+M6 = irb140.ikine6s(T_M6)
+
+% Movimiento Regreso
+MR = jtraj(q_approach_place, q_approach_pick, steps)
+
+% Movimiento Final
+MF = jtraj(q_approach_place, q_home, steps)
+```
+
+* Gráfico de movimientos
+
+```matlab
+%% Plotear las trayectorias
+M = [M1; M2; M3; M4; M5; M6; MR; M2; M3; M4; M5; M6; MF]
+figure
+irb140.plot(M)
+end
+```
+
 ---
 ## 🏗️ Instrucciones
 Para una correcta ejecución, se recomienda seguir lo siguiente:
