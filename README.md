@@ -512,13 +512,6 @@ Para una correcta ejecución, se recomienda seguir lo siguiente:
 ---
 ## ✅ Conclusión
 
-Resumen de lo aprendido y posibles extensiones o proyectos relacionados.
+Este enfoque es útil para pruebas rápidas y simulaciones, pero no representa un control cinemático real. Para tareas más avanzadas, se recomienda usar MoveIt! y generar trayectorias basadas en planificación de movimiento. Igualmente, se puede modificar el código para cargar los valores DH y calcularlos directamente desde el código de python sin tener que calcularlos en programas externos e insertarlos uno a uno en el código.
 
----
-
-## 📬 Contacto
-
-Para preguntas o sugerencias:
-
-* 📧 Correo electrónico: ejemplo@correo.com
 ---
