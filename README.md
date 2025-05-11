@@ -68,6 +68,7 @@ MR = jtraj(q_approach_place, q_approach_pick, steps)
 
 % Movimiento Final
 MF = jtraj(q_approach_place, q_home, steps)
+
 %% Plotear las trayectorias
 M = [M1; M2; M3; M4; M5; M6; MR; M2; M3; M4; M5; M6; MF]
 figure
