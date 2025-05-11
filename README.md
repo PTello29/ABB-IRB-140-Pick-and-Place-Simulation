@@ -478,18 +478,17 @@ if __name__ == '__main__':
     except rospy.ROSInterruptException:
         pass
 ```
-Puede encontrarse d eigual forma en *src/abb_irb140_support/scripts/mover_irb140.py*
+Puede encontrarse de igual forma en *src/abb_irb140_support/scripts/mover_irb140.py*
 
-## 🛠️ Configuración del Entorno
+## 🛠️ Descripción del Código
 
-Pasos para configurar el entorno de desarrollo:
+El script puede resumirse en dos funciones principales:
 
-* Crear un directorio de trabajo.
-
-* Configurar variables de entorno.
-
-* Verificar la instalación de dependencias.
----
+* pick_and_place_sequence():
+	Esta función es la principal del código y arranca estableciendo los valores articulares de los motores en posiciones como “home”, “pre_pick”, “pick”, “post_pick”, “pre_place”, “place” y “post_place”. Estas posiciones de ancla fueron calculadas según nuestras necesidades, pero el usuario puede modificar las posiciones a su conveniencia alterando los valores de cada posición. Igualmente se incluyeron posiciones intermedias para trazar la trayectoria de movimiento. Estos valores pueden ser calculados en programas como MATLAB con la función jtraj del Robotics toolbox de Peter Corke. Esto arroja matrices de transformación homogéneas entre una posición y la siguiente (por ejemplo, entre home y pre_pick) y se puede alterar la cantidad de matrices que se desean. Para cambiar los valores de la matriz de transformación homogénea a valores DH (los cuales son los que se usan como valores en las posiciones) se usa la función ikine6s igualmente del Robotics toolbox de Peter Corke, el cual permite calcular la cinemática inversa y obtener estos valores.
+NOTA: el Robotics Toolbox de Peter Corke te permite calcular la cinemática inversa y obtener los valores DH pero estos valores no siempre pueden coincidir con los valores establecidos en las posiciones, por lo que el usuario puede experimentar que el modelo tenga movimientos bruscos en las trayectorias. Es decir, que las articulaciones del robot se vean afectadas y muestren una configuración completamente distinta a la que se quiere, por lo que es recomendable modificar los valores o bien, calcular los propios valores DH. 
+b* move_robot(joint_positions):
+	Esta función dentro de pick_and_place_sequence() permite mover las articulaciones del robot y mostrarlas en la simulación. En la parte a) se explicó sobre cómo se establecieron los valores, por lo que en esta parte se mandan a llamar las posiciones para mostrarlas en la simulación. Hay que notar que después de cada función move_robot() se tiene un time.sleep() el cual puede ser modificado a gusto del usuario. Esta función solo hará que se espere un momento en que pase de una posición articular a la siguiente.
 ## 🏗️ Instrucciones
 **Paso 1:** Descripción del primer paso
 
