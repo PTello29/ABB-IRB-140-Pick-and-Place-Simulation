@@ -2,10 +2,12 @@
 
 En esta parte del manual explicamos el funcionamiento e implementación del script en Python diseñado para ejecutar la secuencia de Pick and Place en el simulador Gazebo usando el robot ABB IRB 140 modelado y explicado en las anteriores partes de este manual. El script se apoya en el servicio de ROS “/gazebo/set_model_configuration” para modificar directamente las posiciones articulares del robot.
 
+---
 ## 📋 Requisitos Previos
 
 - Haber seguido el tutorial de *Configuración del Entorno* de ROS y Gazebo.
 
+---
 ## 💾 Script
 
 El script que hace funcionar la simulación del Pick And Place es el siguiente:
@@ -480,6 +482,7 @@ if __name__ == '__main__':
 ```
 Puede encontrarse de igual forma en *src/abb_irb140_support/scripts/mover_irb140.py*
 
+---
 ## 🛠️ Descripción del Código
 
 El script puede resumirse en dos funciones principales:
@@ -494,31 +497,18 @@ Esta función es la principal del código y arranca estableciendo los valores ar
 
 Esta función dentro de *pick_and_place_sequence()* permite mover las articulaciones del robot y mostrarlas en la simulación. En la parte *a)* se explicó sobre cómo se establecieron los valores, por lo que en esta parte se mandan a llamar las posiciones para mostrarlas en la simulación. Hay que notar que después de cada función *move_robot()* se tiene un *time.sleep()* el cual puede ser modificado a gusto del usuario. Esta función solo hará que se espere un momento en que pase de una posición articular a la siguiente.
 
+---
 ## 🏗️ Instrucciones
-**Paso 1:** Descripción del primer paso
-
-Instrucciones detalladas y código de ejemplo:
-
-
-**Paso 2:** Descripción del segundo paso
-
-Más instrucciones y ejemplos según sea necesario.
+Para una correcta ejecución, se recomienda seguir lo siguiente:
+**Paso 1:** Asegúrese de que el simulador Gazebo esté corriendo y el modelo del robot esté cargado.
+**Paso 2:** Ejecute el script en una terminal con el entorno de ROS correctamente inicializado.
+**Paso 3:** Use el comando: ./mover_irb140.py o rosrun abb_irb140_support mover_irb140.py si se quiere iniciar el paquete de ROS.
+**Paso 4:** Observe cómo el robot ejecuta el movimiento predefinido.
 
 ---
 ## ✅ Conclusión
 
 Resumen de lo aprendido y posibles extensiones o proyectos relacionados.
-
----
-
-## 📚 Referencias y Recursos Adicionales
-
-
-Enlace a documentación oficial
-
-Tutoriales relacionados
-
-Repositorio de código fuente
 
 ---
 
