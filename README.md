@@ -5,7 +5,7 @@ En esta parte del manual explicamos el funcionamiento e implementación del scri
 ---
 ## 📋 Requisitos Previos
 
-- Haber seguido el tutorial de *Configuración del Entorno* de ROS y Gazebo en [ABB-IRB140-ROS-y-Gazebo](https://github.com/EvaItzcoatl/ABB-IRB140-ROS-y-Gazebo.git.)
+- Haber seguido el tutorial de *Configuración del Entorno* de ROS y Gazebo en [ABB-IRB140-ROS-y-Gazebo](https://github.com/EvaItzcoatl/ABB-IRB140-ROS-y-Gazebo.git)
 
 ---
 ## 💾 Script
