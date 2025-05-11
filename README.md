@@ -11,31 +11,68 @@ En esta parte del manual explicamos el funcionamiento e implementación del scri
 ## 💾 Script Pick And Place en MATLAB
 
 ```
-̣%% Generación de puntos entre poses
+%% Pick And Place de ABB IRB140 en MATLAB
+mdl_irb140 % 6 GDL y tiene muñeca esférica
+irb140.teach
+% .base para transformar la base del robot a una nueva posición (la pared, por ejemplo)
+% .tool para transformar la herramienta del robot
+%% Crear los waypoints
+% Posición home
+q_home= [0 0 0 0 0 0]
+T_home = irb140.fkine(q_home)
 
-% Requiere el Robotics Toolbox de Peter Corke
-mdl_irb140; % Carga el modelo del robot ABB IRB140
+% Posición Approach Pick
+q_approach_pick = [1 1 -0.3 0 -1 0]
+T_approach_pick = irb140.fkine(q_approach_pick)
 
-% Posiciones articulares
-home      = [ 0.0,  0.0, -0.0,  0.0, -0.0,  3.14];
-pre_pick  = [ 1.0,  1.0, -0.3,  0.0, -1.0,  3.14];
-pick      = [ 1.0,  1.0,  0.0,  0.0, -1.0,  3.14];
-post_pick = [ 1.0,  1.0, -0.3,  0.0, -1.0,  3.14];
-pre_place = [-1.0,  1.0,  0.0,  0.0, -1.0,  3.14];
-place     = [-1.0,  1.0,  0.3,  0.0, -1.0,  3.14];
-post_place= [-1.0,  0.5,  0.0,  0.0, -1.0,  3.14];
+% Posición Pick con Cinemática Inversa
+T_pick = T_approach_pick.T
+T_pick(3,4) = 0
+q_pick = irb140.ikine6s(T_pick)
 
-% Número de pasos por trayecto
-steps = 50;
+% Posición Approach Place
+q_approach_place = [-1 1 0 0 -1 0]
+T_approach_place = irb140.fkine(q_approach_place)
 
-% Calcular trayectorias y mostrar matrices de transformación
-qTraj = jtraj(home, pre_pick, steps);
+% Posición Place con Cinemática Inversa
+T_place = T_approach_place.T
+T_place(3,4) = 0
+q_place = irb140.ikine6s(T_place)
 
-disp('Matrices de transformación entre HOME y PRE_PICK:');
-for i = 1:steps
-    T = irb140.fkine(qTraj(i,:)); % Cinemática directa
-    disp(['Paso ', num2str(i)]);
-    disp(T.T); % Matriz 4x4 de transformación homogénea
+%% Armar trayectorias
+steps = 10
+% Movimiento 1
+M1 = jtraj(q_home, q_approach_pick, steps)
+
+% Movimiento 2 - T_approach_pick.T para convertirla a matriz ya que en
+% ctraj las dos tienen que ser matrices o las dos tienen que ser SE3
+T_M2 = ctraj(T_approach_pick.T, T_pick, steps)
+M2 = irb140.ikine6s(T_M2)
+
+% Movimiento 3
+T_M3 = ctraj(T_pick, T_approach_pick.T, steps)
+M3 = irb140.ikine6s(T_M3)
+
+% Movimiento 4
+M4 = jtraj(q_approach_pick, q_approach_place, steps)
+
+% Movimiento 5
+T_M5 = ctraj(T_approach_place.T, T_place, steps)
+M5 = irb140.ikine6s(T_M5)
+
+% Movimiento 3
+T_M6 = ctraj(T_place, T_approach_place.T, steps)
+M6 = irb140.ikine6s(T_M6)
+
+% Movimiento Regreso
+MR = jtraj(q_approach_place, q_approach_pick, steps)
+
+% Movimiento Final
+MF = jtraj(q_approach_place, q_home, steps)
+%% Plotear las trayectorias
+M = [M1; M2; M3; M4; M5; M6; MR; M2; M3; M4; M5; M6; MF]
+figure
+irb140.plot(M)
 end
 ```
 
