@@ -40,11 +40,11 @@ q_place = irb140.ikine6s(T_place)
 
 %% Armar trayectorias
 steps = 10
+
 % Movimiento 1
 M1 = jtraj(q_home, q_approach_pick, steps)
 
-% Movimiento 2 - T_approach_pick.T para convertirla a matriz ya que en
-% ctraj las dos tienen que ser matrices o las dos tienen que ser SE3
+% Movimiento 2
 T_M2 = ctraj(T_approach_pick.T, T_pick, steps)
 M2 = irb140.ikine6s(T_M2)
 
@@ -59,7 +59,7 @@ M4 = jtraj(q_approach_pick, q_approach_place, steps)
 T_M5 = ctraj(T_approach_place.T, T_place, steps)
 M5 = irb140.ikine6s(T_M5)
 
-% Movimiento 3
+% Movimiento 6
 T_M6 = ctraj(T_place, T_approach_place.T, steps)
 M6 = irb140.ikine6s(T_M6)
 
