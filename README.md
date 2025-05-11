@@ -10,12 +10,11 @@ En esta parte del manual explicamos el funcionamiento e implementación del scri
 ---
 ## 💾 Script Pick And Place en MATLAB
 
-```
+```matlab
 %% Pick And Place de ABB IRB140 en MATLAB
 mdl_irb140 % 6 GDL y tiene muñeca esférica
 irb140.teach
-% .base para transformar la base del robot a una nueva posición (la pared, por ejemplo)
-% .tool para transformar la herramienta del robot
+
 %% Crear los waypoints
 % Posición home
 q_home= [0 0 0 0 0 0]
